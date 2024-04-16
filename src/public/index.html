@@ -1,0 +1,85 @@
+//front end 
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hello, Web GPT!</title>
+  </head>
+   <body class="bg-gray-800 text-blue-200 font-sans">
+    <!-- <input type="file" id="imageInput" accept="image/*">
+    <button onclick="uploadImage()">Upload Image</button>
+
+    <script>
+        function uploadImage() {
+    const input = document.getElementById('imageInput');
+    const file = input.files[0];
+    if (file) {
+        console.log('Uploading:', file.name);
+        const formData = new FormData();
+        formData.append('image', file);
+
+        fetch('/upload', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => console.log('Server response:', data))
+        .catch(error => console.error('Upload error:', error));
+    } else {
+        console.log('No file selected.');
+    }
+}
+    </script> -->
+    
+    <div class="p-4 bg-blue-900">
+      <input
+        id="object"
+        type="text"
+        placeholder="object"
+        class="block rounded w-full py-2 px-4 text-black"
+      />
+      <button
+        id="1_iteration"
+        class="mt-4 mr-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        generate first iteration
+      </button>
+      <!-- <button
+        id="makeprompt"
+        class="mt-4 bg-pink-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Make Prompt
+      </button> -->
+    </div>
+    <div id="output" class="p-4"></div>
+
+    <script>
+     const objectElement = document.getElementById("object");
+const firstIterationButton = document.getElementById("1_iteration");
+firstIterationButton.addEventListener("click", () => {
+  const result = objectElement.value; // Capture the input value at the time of the button click
+  if (result) { // Only make the API call if there is some input
+    fetch(`/api/dalle?prompt=${result}`)
+      .then((response) => response.text())
+      .then((url) => {
+        const e = document.createElement("div");
+
+        e.innerHTML = `
+        <div class="mb-4">
+          <img class="block" src="${url}" />
+          <div class="p-4 bg-gray-500 text-white w-1/2">${result}</div>
+          <div class="p-4 bg-red-500 text-white w-1/4">openai Dall•e 3</div>
+        </div>
+        `;
+        const output = document.getElementById("output");
+
+        output.insertBefore(e, output.firstChild);
+      });
+  } else {
+    console.log('No input provided.');
+  }
+});
+    </script>
+  </body>
+</html>

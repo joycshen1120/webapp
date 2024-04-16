@@ -1,0 +1,22 @@
+{
+  "flights": [
+    {
+      "id": "FL123",
+      "from": "LAX",
+      "to": "JFK",
+      "departure": "2024-05-20T06:00:00Z",
+      "arrival": "2024-05-20T14:00:00Z",
+      "price": 350.00,
+      "currency": "USD"
+    },
+    {
+      "id": "FL456",
+      "from": "SFO",
+      "to": "ORD",
+      "departure": "2024-06-15T09:00:00Z",
+      "arrival": "2024-06-15T15:00:00Z",
+      "price": 280.00,
+      "currency": "USD"
+    }
+  ]
+}
