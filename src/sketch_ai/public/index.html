@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello, SketchAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-800 text-blue-200 font-sans">
+    <div class="p-4 bg-blue-900">
+  <p>a simple sketch of</p>
+  <input
+    id="prompt"
+    type="text"
+    placeholder="prompt"
+    class="block rounded w-full py-2 px-4 text-black"
+  />
+  <p>in low-fidelity style, draw like a designer making their (number) with pencil</p>
+
+  <input
+    id="textAddedOne"
+    type="text"
+    placeholder="first added text"
+    class="block rounded w-full py-2 px-4 text-black"
+  />
+
+  <input
+    id="textAddedTwo"
+    type="text"
+    placeholder="second added text"
+    class="block rounded w-full py-2 px-4 text-black"
+  />
+
+  <button
+    id="fal"
+    class="mt-4 mr-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+  >
+    fal SD Cascade
+  </button>
+</div>
+<div id="output" class="p-4"></div>
+
+<script>
+  const promptElement = document.getElementById("prompt");
+  const textAddedOneInput = document.getElementById("textAddedOne");
+  const textAddedTwoInput = document.getElementById("textAddedTwo");
+  const falButton = document.getElementById("fal");
+
+  falButton.addEventListener("click", () => {
+    // Access the value properties directly, avoiding re-declaration of existing variable names
+    const textOneValue = textAddedOneInput.value;
+    const promptValue = promptElement.value;
+    const textTwoValue = textAddedTwoInput.value;
+
+    const prompt = "a simple sketch of " + promptValue + " " + textOneValue + " " + textTwoValue + " in low-fidelity style, draw like a designer making their 1st sketch with pencil";
+
+    console.log(prompt); // This will help verify what's being sent to the server
+    fetch(`/api/fal?prompt=${encodeURIComponent(prompt)}`)
+      .then((response) => response.text())
+      .then((url) => {
+        const e = document.createElement("div");
+
+        e.innerHTML = `
+          <div class="mb-4">
+            <img class="block" src="${url}" />
+            <div class="p-4 bg-gray-500 text-white w-1/2">${prompt}</div>
+            <div class="p-4 bg-red-500 text-white w-1/4">fal SD Cascade</div>
+          </div>
+        `;
+        const output = document.getElementById("output");
+        //always display as the first one
+        output.insertBefore(e, output.firstChild);
+      });
+  });
+  // dalleButton.addEventListener("click", () => {
+  //   // Get values from the input fields
+  //   const frontText = textToAddAtFrontInput.value;
+  //   const backText = textToAddAtBackInput.value;
+  //   const promptElementValue = promptElement.value;
+
+  //   // Concatenate the text at the front and back with the main prompt
+  //   const prompt = frontText + " " + promptElementValue + " " + backText;
+  //   console.log(prompt);
+  //       fetch(`/api/fal?prompt=${prompt}`)
+  //         .then((response) => response.text())
+  //         .then((url) => {
+  //           // This line creates a new <div> element and assigns it to the variable e. 
+  //           //This <div> will be used to display the fetched image and associated text.
+  //           const e = document.createElement("div");
+
+  //           e.innerHTML = `
+  //           <div class="mb-4">
+  //             <img class="block" src="${url}" />
+  //             <div class="p-4 bg-gray-500 text-white w-1/2">${prompt}</div>
+  //             <div class="p-4 bg-red-500 text-white w-1/4">fal</div>
+  //           </div>
+  //           `;
+  //           const output = document.getElementById("output");
+
+
+  //           output.insertBefore(e, output.firstChild);
+  //         });
+  //     });
+
+      const makepromptButton = document.getElementById("makeprompt");
+      makepromptButton.addEventListener("click", () => {
+        const style = [
+          "hyperrealistic",
+          "surreal",
+          "abstract",
+          "noir",
+          "cyberpunk",
+          "minimalist",
+        ];
+        const media = [
+          "photo",
+          "painting",
+          "sketch",
+          "sculpture",
+          "film still",
+        ];
+        const professions = [
+          "Barista",
+          "Zoologist",
+          "Sommelier",
+          "Cartographer",
+          "Entomologist",
+          "Botanist",
+          "Numismatist",
+          "Philatelist",
+          "Calligrapher",
+          "Mycologist",
+          "Taxidermist",
+          "Ornithologist",
+          "Ichthyologist",
+          "Horologist",
+          "Palynologist",
+          "Apiarist",
+          "Ethnobotanist",
+          "Herpetologist",
+          "Speleologist",
+          "Glaciologist",
+          "Oenophile",
+          "Phlebotomist",
+          "Arborist",
+          "Falconer",
+          "Astronomer",
+          "Oceanographer",
+          "Viticulturist",
+          "Gemologist",
+          "Philosopher",
+          "Limnologist",
+          "Petrologist",
+          "Sculptor",
+          "Calligrapher",
+          "Luthier",
+          "Topiary",
+          "Origamist",
+          "Baroque",
+          "Paleontologist",
+          "Semiotician",
+          "Harpsichordist",
+          "Biomechanist",
+          "Vexillologist",
+          "Dendrochronologist",
+          "Choreographer",
+          "Metallurgist",
+          "Cartomancer",
+          "Electrochemist",
+          "Embryologist",
+          "Kinesiologist",
+        ];
+
+        const verbs = [
+          "eating",
+          "drinking",
+          "sleeping",
+          "running",
+          "walking",
+          "flying",
+          "swimming",
+          "cycling",
+          "driving",
+          "sailing",
+          "hiking",
+          "climbing",
+        ];
+
+        promptElement.value = `${pick(style)} ${pick(media)} of a ${pick(
+          professions
+        )} ${pick(verbs)}`;
+      });
+
+      function pick(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+    </script>
+  </body>
+</html>
