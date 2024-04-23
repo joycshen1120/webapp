@@ -32,13 +32,41 @@ const app = new Application();
 const router = new Router();
 
 // add the DALL•E route
-router.get("/api/dalle", async (ctx) => {
+// router.get("/api/dalle", async (ctx) => {
+//   const prompt = ctx.request.url.searchParams.get("prompt");
+//   console.log("Request received");
+//   console.log(prompt);
+//   const shortPrompt = prompt.slice(0, 1024);
+//   const result = await makeImage(shortPrompt);
+//   ctx.response.body = result;
+// });
+
+//new generation 0422
+router.get("/api/sketch", async (ctx) => {
   const prompt = ctx.request.url.searchParams.get("prompt");
-  console.log("Request received");
-  console.log(prompt);
-  const shortPrompt = prompt.slice(0, 1024);
-  const result = await makeImage(shortPrompt);
-  ctx.response.body = result;
+  console.log("Sketch request received:", prompt);
+  const shortPrompt = prompt.slice(0, 1024); // Shorten prompt if needed
+
+  const result = await fal.subscribe("fal-ai/stable-cascade", { // Model name might need to be adjusted based on availability
+    input: {
+      "prompt": `Sketch of ${shortPrompt}`, // Modify the prompt to emphasize sketching
+      "image_size": "square_hd",
+      "num_images": 1,
+      "first_stage_steps": 15, // Adjust these steps for less detail
+      "second_stage_steps": 5,
+      "guidance_scale": 2, // Lower guidance for less fidelity
+      "enable_safety_checker": true,
+    },
+    logs: true,
+    onQueueUpdate: (update) => {
+      if (update.status === "IN_PROGRESS") {
+        console.log("Sketch generation in progress...");
+      }
+    },
+  });
+
+  console.log("Sketch result:", result);
+  ctx.response.body = result.images[0].url; // Return the URL of the generated sketch
 });
 
 router.get("/api/fal", async (ctx) => {

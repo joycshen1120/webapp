@@ -1,0 +1,10 @@
+{
+  "deploy": {
+    "project": "80057530-101f-42e5-a008-64ca6c3ca032",
+    "exclude": [
+      "**/node_modules"
+    ],
+    "include": [],
+    "entrypoint": "src/sketch_ai/webapp.js"
+  }
+}

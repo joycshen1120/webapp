@@ -1,5 +1,5 @@
 {
   "tasks": {
-    "deploy-sketchai": "deployctl deploy --prod --project=joycshen-webapp ./sketch_ai/webapp.js"
+    "deploy-sketchai": "deployctl deploy --prod --project=joycshen1120-webapp ./sketch_ai/webapp.js"
   }
 }

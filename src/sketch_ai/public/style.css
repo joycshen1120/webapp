@@ -1,0 +1,93 @@
+body {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 100;
+    background-color: #2b4257;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center; /* Center the content horizontally */
+    align-items: center; /* Center the content vertically */
+    height: 100vh; /* Full viewport height */
+    position: relative; /* Needed for absolute positioning of children */
+}
+
+/* Styling for the input field container */
+.input_field {
+    background: white; /* White background for the input field area */
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for 3D effect */
+    border-radius: 8px; /* Rounded corners */
+    width: 320px; /* Fixed width */
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center-align the children */
+    gap: 10px; /* Space between children */
+    z-index: 1; /* Ensure it's above the output images */
+}
+
+/* Styling for labels */
+label {
+    color: black;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Style adjustments for input boxes */
+input[type="text"] {
+    font-family: 'Courier New', Courier, monospace;
+    border: 2px solid #ccc; /* Light grey border */
+    border-radius: 8px; /* Rounded corners */
+    font-size: 14px; /* Readable text size */
+    padding: 8px; /* Padding for touch friendliness */
+    width: 100%; /* Full-width to fill container */
+}
+
+/* Button styling */
+button {
+    background-color: #3c5975; /* Matching blue for button */
+    font-family: 'Courier New', Courier, monospace;
+    color: white;
+    border: none;
+    border-radius: 8px; /* Rounded corners */
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: rgb(123, 160, 189); /* Darker blue on hover */
+}
+
+.prompt {
+    font-family: 'Courier New', Courier, monospace;
+    color: white;
+}
+
+
+.output-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.image-wrapper {
+    width: 100px; /* Initial smaller size */
+    height: 100px;
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer; /* Indicates an interactive element */
+}
+
+.image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-wrapper:hover {
+    transform: scale(1.5); /* Enlarges the image on hover */
+    z-index: 10;
+}
