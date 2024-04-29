@@ -31,16 +31,6 @@ import { createExitSignal, staticServer } from "../../shared/server.ts";
 const app = new Application();
 const router = new Router();
 
-// add the DALL•E route
-// router.get("/api/dalle", async (ctx) => {
-//   const prompt = ctx.request.url.searchParams.get("prompt");
-//   console.log("Request received");
-//   console.log(prompt);
-//   const shortPrompt = prompt.slice(0, 1024);
-//   const result = await makeImage(shortPrompt);
-//   ctx.response.body = result;
-// });
-
 //new generation 0422
 router.get("/api/sketch", async (ctx) => {
   const prompt = ctx.request.url.searchParams.get("prompt");

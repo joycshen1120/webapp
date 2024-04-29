@@ -8,10 +8,16 @@ const __dirname = new URL(".", import.meta.url).pathname;
 const env = await load({ envPath: `./src/.env` });
 console.log(env);
 
+import * as log from "./logger.ts";
+import { isDenoDeployment, loadEnv } from "./util.ts";
+
 // ! if apiKey is undefined, `new OpenAI` constructor will try to find
 // ! an environment variable called OPENAI_API_KEY
-const openai = new OpenAI({
-  apiKey: env.OPENAI_API_KEY,});
+// const openai = new OpenAI({
+//   apiKey: env.OPENAI_API_KEY,
+// });
+
+const openai = new OpenAI({ apiKey: getOpenAIKey() });
 
 const models = {
   "3.5-turbo": {
@@ -146,4 +152,27 @@ export async function makeImage(prompt, c = {}) {
   console.log(chalk.gray(image.data[0].revised_prompt));
 
   return image.data[0].url;
+}
+
+function getOpenAIKey() {
+  // look in environment variables first
+  if (Deno.env.get("OPENAI_API_KEY")) {
+    log.info("OPENAI_API_KEY found in Deno.env");
+    return Deno.env.get("OPENAI_API_KEY");
+  }
+
+  // then look in .env file
+  const env = loadEnv();
+  if (env.OPENAI_API_KEY) {
+    log.info("OPENAI_API_KEY found in .env file");
+    return env.OPENAI_API_KEY;
+  }
+
+  // if not found, report and exit
+  log.error("OPENAI_API_KEY not found in Deno.env or .env file.");
+  if (!isDenoDeployment()) {
+    // Deno.exit is not allowed on deno deploy
+    log.error("exiting");
+    Deno.exit(1);
+  }
 }
