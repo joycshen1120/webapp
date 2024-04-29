@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Storyboard Maker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body,
+        button {
+            font-family: "Press Start 2P", cursive;
+        }
+
+        .centered-container {
+            /* position: fixed; */
+            flex: 0 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 40vh;
+            width: 100vw;
+            z-index: 1000; /* Keeps it above other content */
+        }
+
+        .image-container {
+               display: flex; /* Changed from inline-block to flex to better control alignment */
+    flex-direction: column; /* Stacks children (sketch number and image) vertically */
+    align-items: center; /* Centers children horizontally */
+    margin-right: 20px; /* Keeps original right margin */
+    margin-bottom: 20px; /* Adds space below each image container */
+        }
+
+        .image-container img {
+            width: 200px;
+            transition: transform 0.2s;
+        }
+
+        .image-container img:hover {
+            transform: scale(3);
+        }
+
+        button {
+            background-color: #008000;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #004d00;
+            transform: translateY(-2px);
+        }
+
+        .button-custom {
+            background-color: #333;
+            color: #fff;
+            border: 2px solid #555;
+            padding: 8px 16px;
+            font-size: 0.75rem;
+            border-radius: 20px;
+            box-shadow: 3px 3px 0 #222;
+            text-align: center;
+            display: inline-block;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s;
+        }
+
+        .button-custom:hover {
+            background-color: #444;
+            box-shadow: 6px 6px 0 #111;
+            transform: translate(-3px, -3px);
+        }
+
+        .selectedSketchContainer {
+               display: flex; /* Changed from inline-block to flex to better control alignment */
+    flex-direction: column; /* Stacks children (sketch number and image) vertically */
+    align-items: center; /* Centers children horizontally */
+    margin-right: 20px; /* Keeps original right margin */
+    margin-bottom: 20px; /* Adds space below each image container */
+        }
+
+
+
+#output {
+    flex: 0 0 auto;
+    flex-direction: column;  /* Align children vertically */
+    justify-content: center; /* Center children along the vertical axis */
+   align-items: center; /* Align items to the start of the horizontal axis */
+    width: 80%; /* Only take up half of the viewport width */
+    height: 50vh; /* Adjusted height if needed */
+    margin-top: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+#continue-button {
+    display: flex;
+    flex-direction: column;  /* Align children vertically */
+    justify-content: center; /* Center children along the vertical axis */
+    align-items: center;
+        }
+
+.prompt-box {
+    width: 60%;              /* Control width to not stretch too far horizontally */
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    padding: 10px;
+    margin: 10px 0;          /* Vertical margin for spacing between boxes */
+    cursor: pointer;
+    fill:none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional: Adds depth to the boxes */
+    transition: background-color 0.3s;
+    font-size: 12px;
+}
+
+.prompt-box:hover {
+    background-color: #444;
+}
+
+.prompt-box.selected {
+    background-color: #add8e6;
+}
+
+        @media (max-width: 768px) {
+            .button-custom {
+                padding: 8px 12px;
+                font-size: 0.65rem;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        .thoughtsInput {
+            width: 100%;
+        }
+
+        #selectedSketchContainer {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    /* border: 1px solid #fff;  */
+}
+
+.thoughts-input-container {
+    width: 50%;
+}
+
+.image-container {
+    width: 45%;
+    text-align: center;
+}
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+</head>
+<body class="bg-gray-900 font-sans text-white">
+<div class="centered-container">
+    <div class="text-center">
+        <h2 class="mb-4 text-lg font-bold">Storyboard Maker</h2>
+        <div id="customButtonContainer" class="my-4 flex justify-center">
+            <button onclick="showSection('sketchPage')" class="button-custom">Sketch</button>
+            <button onclick="showSection('storyboardPage')" class="button-custom">Storyboard</button>
+            <button onclick="window.location.reload();" class="button-custom">AI</button>
+
+        </div>
+        <div id="sketchPage" class="hidden">
+            <input id="phrase-input" type="text" placeholder="Enter your phrase..."
+                   class="text-input mb-2 block w-full rounded px-4 py-2 text-black"/>
+            <input id="setting-input" type="text" placeholder="Enter setting..."
+                   class="text-input mb-2 block w-full rounded px-4 py-2 text-black"/>
+            <button onclick="generateSketch()" class="rounded">Generate Sketch</button>
+        </div>
+
+        <div id="selectedSketchContainer" class="hidden mx-auto">
+            <div id="selectedImageContainer" class="image-container"></div>
+            <div id="thoughts-input-container" class="hidden">
+            <textarea id="thoughtsInput" placeholder="Enter your thoughts here for inspiration..." class="text-input block w-full rounded px-3 py-2 text-black mb-auto"></textarea>
+            <button onclick="saveThoughts()" class="rounded">Save Thoughts</button>
+        </div>
+        </div>
+
+        <div id="prompt-container" class="prompt-container"></div>
+        
+        <div id="storyboardPage" class="hidden">
+            <div id="storyboard-frames">
+                <input type="text" placeholder="Frame 1 description..."
+                       class="frame-input mb-2 block w-full rounded px-4 py-2 text-black"/>
+            </div>
+            <button onclick="addFrame()" class="rounded">Add Frame</button>
+            <button onclick="generateStoryboard()" class="rounded">Generate Storyboard</button>
+            
+        </div>
+        <div id="error" class="mt-2 hidden text-red-500"></div>
+    </div>
+</div>
+<div id="output" class="flex flex-wrap items-center justify-center p-4"></div>
+<div id="continue-button">
+<button onclick="showSection('storyboardPage')" class="button-custom hidden">Continue Storyboarding</button>
+</div>
+<div id="loader" class="mt-4 hidden text-center">
+    <div class="h-16 w-16 animate-spin rounded-full border-b-2 border-white"></div>
+</div>
+
+<script>
+    let sketchCounter = 1; // Counter for naming sketches
+
+    function showSection(sectionId) {
+        document.getElementById("sketchPage").classList.add("hidden");
+        document.getElementById("storyboardPage").classList.add("hidden");
+        document.getElementById(sectionId).classList.remove("hidden");
+    }
+
+    function addFrame() {
+        var input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "Frame description...";
+        input.className =
+            "frame-input block rounded w-full py-2 px-4 text-black mb-2";
+        document.getElementById("storyboard-frames").appendChild(input);
+    }
+    function generateStoryboard() {
+    const prompts = Array.from(document.getElementsByClassName('frame-input')).map(input => input.value.trim());
+    if (prompts.some(prompt => prompt === "")) {
+        document.getElementById('error').textContent = 'Please fill in all frame descriptions.';
+        document.getElementById('error').classList.remove('hidden');
+        return;
+    }
+    document.getElementById('error').classList.add('hidden');
+    const loader = document.getElementById('loader');
+    loader.classList.remove('hidden'); // Show loader
+    fetch('/api/storyboard', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompts })
+    })
+    .then(response => response.json())
+    .then(data => {
+        loader.classList.add('hidden'); // Hide loader
+        const output = document.getElementById('output');
+        if (data.images) {
+            output.innerHTML = data.images.map(url => `<div class="image-container"><img src="${url}" alt="Storyboard Frame" /></div>`).join('');
+        } else {
+            document.getElementById('error').textContent = 'Error in generating images.';
+            document.getElementById('error').classList.remove('hidden');
+        }
+    }).catch(error => {
+        loader.classList.add('hidden'); // Hide loader
+        console.error('Error fetching the storyboard:', error);
+        document.getElementById('error').textContent = 'Failed to generate the storyboard.';
+        document.getElementById('error').classList.remove('hidden');
+    });
+    
+}
+
+    async function generateSketch() {
+        // get phrase
+        const phrase = document.getElementById("phrase-input").value;
+        // get setting
+        const setting = document.getElementById("setting-input").value;
+        document.getElementById('error').classList.add('hidden');
+    const loader = document.getElementById('loader');
+    loader.classList.remove('hidden'); // Show loader
+        // send phrase and setting, ask backend to generate sketch, receive URL
+        const response = await fetch(`/api/sketch`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ phrase, setting }),
+        }).then((response) => response.json());
+
+        // create and append image
+        const img = document.createElement("img");
+        img.src = response.sketchUrl;
+        img.alt = "Generated Sketch";
+
+        // Create a container for each image
+        const imageContainer = document.createElement("div");
+        imageContainer.classList.add("image-container");
+        
+        // Create a span for sketch number
+        const sketchNumber = document.createElement("span");
+        sketchNumber.textContent = `Sketch ${sketchCounter} `;
+        sketchNumber.style.fontWeight = "bold";
+
+        // Append sketch number and image to the container
+        imageContainer.appendChild(sketchNumber);
+        imageContainer.appendChild(img);
+
+        // Append image container to the output element
+        document.getElementById("output").appendChild(imageContainer);
+
+        // Increment the sketch counter
+        sketchCounter++;
+
+        img.onclick = function() {
+        selectSketch(img, phrase, setting);
+    };
+
+    function selectSketch(selectedImage, phrase, setting) {
+    // Clear existing sketches except the selected one
+    document.getElementById("output").innerHTML = '';
+    
+    // Show the selected sketc container
+    const selectedSketchContainer = document.getElementById("selectedSketchContainer");
+    selectedSketchContainer.classList.remove("hidden");
+    document.getElementById("thoughts-input-container").style.display = "block";
+
+    // Add the selected image to the dedicated container
+    const selectedImageContainer = document.getElementById("selectedImageContainer");
+    selectedImageContainer.innerHTML = ''; // Clear previous selections
+    selectedImageContainer.appendChild(selectedImage.cloneNode());
+
+    // Show the thoughts input interface on the right side
+    document.getElementById("thoughtsInput").value = ''; // Clear previous input
+}
+    }
+
+
+async function saveThoughts() {
+    const thoughts = document.getElementById("thoughtsInput").value.trim();
+    if (!thoughts) {
+        alert("Please enter some thoughts before saving.");
+        return;
+    }
+
+    const response = await fetch(`/api/saveThoughts`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ thoughts }),
+    });
+
+    if (response.ok) {
+        const data = await response.json(); // Only parse the response once
+        console.log("Prompts generated:", data.prompts);
+        displayPrompts(data.prompts);
+        document.getElementById("continue-button").children[0].classList.remove('hidden');
+    } else {
+        const errorData = await response.json(); // Parse error details for accurate error reporting
+        console.error('Failed to generate prompts:', errorData.error);
+        alert('Failed to generate prompts. Please try again.');
+    }
+}
+
+function displayPrompts(prompts) {
+    const container = document.getElementById('output');
+    container.innerHTML = ''; // Clear existing prompts
+
+    Object.keys(prompts).forEach(key => {
+        const promptBox = document.createElement('div');
+        promptBox.classList.add('prompt-box');
+        promptBox.textContent = prompts[key];
+        promptBox.onclick = function() {
+            promptBox.classList.toggle('selected'); // Toggle selection class on click
+        };
+        container.appendChild(promptBox);
+    });
+}
+</script>
+</body>
+</html>

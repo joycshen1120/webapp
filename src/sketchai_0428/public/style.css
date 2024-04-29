@@ -1,0 +1,29 @@
+.button-custom {
+    background-color: #333; /* Dark grey background */
+    color: #fff; /* White text */
+    border: 2px solid #555; /* Grey border */
+    padding: 8px 16px;
+    font-size: 0.75rem;
+    font-family: 'Press Start 2P', cursive;
+    border-radius: 20px; /* Rounded corners */
+    box-shadow: 3px 3px 0 #222; /* Shadow effect for depth */
+    text-align: center;
+    display: inline-block; /* Allows buttons to be inline and control width */
+    margin: 0 10px; /* Spacing between buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s;
+}
+
+.button-custom:hover {
+    background-color: #444; /* Slightly lighter grey on hover */
+    box-shadow: 6px 6px 0 #111; /* Larger shadow for lifted effect */
+    transform: translate(-3px, -3px); /* Simulate button press */
+}
+
+/* Responsive tweaks (optional) */
+@media (max-width: 768px) {
+    .button-custom {
+        padding: 8px 12px;
+        font-size: 0.65rem; /* Smaller text on smaller screens */
+    }
+}

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Storyboard Maker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body, button {
+            font-family: 'Press Start 2P', cursive; /* Emulates 8-bit style text */
+        }
+        .old-school {
+            background-color: #000000; /* Black background */
+            color: #00FF00; /* Bright green text typical of old monitors */
+            border: 3px solid #FFFFFF; /* Thick white border for a retro feel */
+        }
+        .centered-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+        }
+        .image-container img {
+            width: 100px; /* Keep images small and scalable */
+            transition: transform 0.2s; /* Smooth transition for scaling */
+        }
+        .image-container img:hover {
+            transform: scale(2); /* Enlarges the image on hover */
+        }
+        button {
+            background-color: #008000; /* Classic Windows green */
+            border: none; /* No border for a more modern take */
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background-color: #004d00; /* Darker green on hover */
+            transform: translateY(-2px); /* Subtle lift effect */
+        }
+        .hidden {
+            display: none; /* Ensures hidden elements are not displayed */
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white font-sans">
+    <div class="centered-container">
+        <div class="p-4 old-school text-center">
+            <h2 class="text-lg font-bold">Storyboard with Stable Diffusion</h2>
+            <button id="startBtn" class="rounded">
+                Create Storyboard
+            </button>
+            <div id="inputFields" class="hidden mt-4">
+                <input type="text" placeholder="Frame 1 description..." class="frame-input block rounded w-full py-2 px-4 text-black mb-2" />
+                <button onclick="addFrame()" class="rounded">
+                    Add Frame
+                </button>
+                <button id="generate" class="rounded">
+                    Generate Storyboard
+                </button>
+            </div>
+            <div id="error" class="text-red-500 mt-2 hidden"></div>
+        </div>
+    </div>
+    <div id="output" class="p-4 flex flex-wrap justify-center items-center"></div>
+    <div id="loader" class="hidden text-center mt-4">
+        <div class="w-16 h-16 border-b-2 border-white rounded-full animate-spin"></div>
+    </div>
+
+    <script>
+        document.getElementById('startBtn').addEventListener('click', function() {
+            document.getElementById('inputFields').classList.remove('hidden'); // Show the input fields
+            this.classList.add('hidden'); // Hide the start button
+        });
+
+        document.getElementById('generate').addEventListener('click', function() {
+            const prompts = Array.from(document.getElementsByClassName('frame-input')).map(input => input.value.trim());
+            if (prompts.some(prompt => prompt === "")) {
+                document.getElementById('error').textContent = 'Please fill in all frame descriptions.';
+                document.getElementById('error').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('error').classList.add('hidden');
+            const loader = document.getElementById('loader');
+            loader.classList.remove('hidden'); // Show loader
+            fetch('/api/storyboard', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prompts })
+            })
+            .then(response => response.json())
+            .then(data => {
+                loader.classList.add('hidden'); // Hide loader
+                const output = document.getElementById('output');
+                if (data.images) {
+                    output.innerHTML = data.images.map(url => `<div class="image-container"><img src="${url}" alt="Storyboard Frame" /></div>`).join('');
+                } else {
+                    document.getElementById('error').textContent = 'Error in generating images.';
+                    document.getElementById('error').classList.remove('hidden');
+                }
+            }).catch(error => {
+                loader.classList.add('hidden'); // Hide loader
+                console.error('Error fetching the storyboard:', error);
+                document.getElementById('error').textContent = 'Failed to generate the storyboard.';
+                document.getElementById('error').classList.remove('hidden');
+            });
+        });
+
+        function addFrame() {
+            const inputFields = document.getElementById('inputFields');
+            const newInput = document.createElement('input');
+            newInput.type = 'text';
+            newInput.placeholder = `Frame ${inputFields.children.length + 1} description...`;
+            newInput.className = 'frame-input block rounded w-full py-2 px-4 text-black mb-2';
+            inputFields.appendChild(newInput);
+        }
+    </script>
+</body>
+</html>
